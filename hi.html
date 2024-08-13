@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transportation and Hospital Service Areas in Seattle</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+    <style>
+        #map { height: 600px; }
+    </style>
+</head>
+<body>
+    <h1>Transportation and Hospital Service Areas in Seattle</h1>
+    <p>This map provides information about transportation routes and hospital service areas in Seattle.</p>
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+    <script>
+        // Initialize the map
+        var map = L.map('map').setView([47.6062, -122.3321], 12);
+
+        // Add a basemap
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Add hospital points from an external GeoJSON file
+        var hospitalDataUrl = 'path/to/hospitals.geojson';
+        fetch(hospitalDataUrl)
+            .then(response => response.json())
+            .then(data => {
+                L.geoJSON(data, {
+                    onEachFeature: function (feature, layer) {
+                        layer.bindPopup('<strong>Hospital:</strong> ' + feature.properties.name + '<br><strong>Beds:</strong> ' + feature.properties.beds);
+                    }
+                }).addTo(map);
+            });
+
+        // Add transportation lines (hardcoded)
+        var transportLines = [
+            {
+                "type": "Feature",
+                "geometry": {
+                    "type": "LineString",
+                    "coordinates": [
+                        [-122.335167, 47.608013],
+                        [-122.335167, 47.613545]
+                    ]
+                },
+                "properties": {
+                    "name": "Route 1",
+                    "description": "Main transportation route"
+                }
+            },
+            {
+                "type": "Feature",
+                "geometry": {
+                    "type": "LineString",
+                    "coordinates": [
+                        [-122.335167, 47.613545],
+                        [-122.342567, 47.613545]
+                    ]
+                },
+                "properties": {
+                    "name": "Route 2",
+                    "description": "Secondary transportation route"
+                }
+            }
+        ];
+
+        L.geoJSON(transportLines, {
+            style: { color: 'blue', weight: 4 },
+            onEachFeature: function (feature, layer) {
+                layer.bindPopup('<strong>Route:</strong> ' + feature.properties.name + '<br><strong>Description:</strong> ' + feature.properties.description);
+            }
+        }).addTo(map);
+
+        // Add hospital service areas (hardcoded polygons)
+        var hospitalServiceAreas = [
+            {
+                "type": "Feature",
+                "geometry": {
+                    "type": "Polygon",
+                    "coordinates": [[
+                        [-122.335167, 47.606013],
+                        [-122.335167, 47.608545],
+                        [-122.332567, 47.608545],
+                        [-122.332567, 47.606013]
+                    ]]
+                },
+                "properties": {
+                    "name": "Service Area 1",
+                    "description": "Service area for Hospital 1"
+                }
+            },
+            {
+                "type": "Feature",
+                "geometry": {
+                    "type": "Polygon",
+                    "coordinates": [[
+                        [-122.342167, 47.616013],
+                        [-122.342167, 47.618545],
+                        [-122.339567, 47.618545],
+                        [-122.339567, 47.616013]
+                    ]]
+                },
+                "properties": {
+                    "name": "Service Area 2",
+                    "description": "Service area for Hospital 2"
+                }
+            }
+        ];
+
+        L.geoJSON(hospitalServiceAreas, {
+            style: { color: 'green', weight: 2 },
+            onEachFeature: function (feature, layer) {
+                layer.bindPopup('<strong>Service Area:</strong> ' + feature.properties.name + '<br><strong>Description:</strong> ' + feature.properties.description);
+            }
+        }).addTo(map);
+
+        // Add Leaflet Control Geocoder plugin
+        L.Control.geocoder().addTo(map);
+    </script>
+</body>
+</html>

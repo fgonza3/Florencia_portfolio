@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transportation Expense by Income in Washington State</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/c3@0.7.20/c3.min.css">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <link href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-scale/v1.1.0/mapbox-gl-scale.css' rel='stylesheet' />
+    <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-scale/v1.1.0/mapbox-gl-scale.min.js'></script>
+
+    <style>
+        /* Apply a basic reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+        }
+
+        .main-container {
+            display: flex;
+            flex-direction: row;
+            height: 100%;
+            width: 100%;
+        }
+
+        #map {
+            flex: 3; /* map takes up 75% of the width */
+            height: 100%; /* Full height of the viewport */
+        }
+
+        .dashboard-container {
+            flex: 1; /* dashboard takes up the remaining 25% of the width */
+            background-color: #ffffff; /* Light background for the dashboard */
+            color: #333; /* Darker text for better readability */
+            padding: 20px; /* Add more padding for space */
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Soft shadow for depth */
+            font-family: 'Roboto', sans-serif; /* Modern, clean font */
+            overflow-y: auto; /* Allows for scrolling */
+            display: flex;
+            flex-direction: column; /* Stack children vertically */
+        }
+
+        h2 {
+            color: #5b6abf; /* Primary color for headings */
+            margin-bottom: 5px; /* Spacing below headings */
+            font-size: 1.5em; /* Larger font size for headings */
+        }
+
+        .toggle-container {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 5px; /* Add some space between the toggle and the next section */
+        }
+
+        .toggle-container div {
+            display: flex;
+            align-items: center; /* Aligns items vertically in the center */
+            margin-bottom: 5px; /* Space between each toggle */
+        }
+
+        .toggle-container label {
+            margin-right: 5px; /* Space after label text */
+            cursor: pointer; /* Change cursor to indicate clickable */
+        }
+
+        /* Adjust the size and the position of the checkbox */
+        .toggle-container input[type="checkbox"] {
+            cursor: pointer; /* Change cursor to indicate clickable */
+        }
+
+        /* Container for all legends */
+        .legend-container {
+            margin-top: 5px;
+        }
+
+        /* Title for each legend */
+        .legend-title {
+            font-size: 16px; /* Larger font size for titles */
+            font-weight: bold; /* Make the title bold */
+            margin-bottom: 5px; /* Space below the title */
+        }
+
+        /* Individual legend block */
+        .legend-item {
+            margin-bottom: 5px; /* Space between legend blocks */
+        }
+
+        /* Horizontal scale for legend colors and descriptions */
+        .legend-scale {
+            display: flex; /* Use flexbox to layout color and description */
+            align-items: center; /* Align items vertically */
+            margin-bottom: 4px; /* Space between each scale item */
+        }
+
+        /* Color block in the legend */
+        .legend-color {
+            width: 24px; /* Width of the color box */
+            height: 24px; /* Height of the color box */
+            border: 1px solid #000; /* Border to define the box */
+            margin-right: 8px; /* Space between the color box and description */
+        }
+
+        /* Text description in the legend */
+        .legend-description {
+            font-size: 14px; /* Font size for the description */
+        }
+
+        /* Circle in the legend */
+        .legend-circle {
+            width: 14px; /* Diameter of the circle */
+            height: 14px; /* Diameter of the circle */
+            border-radius: 50%; /* Makes it round */
+            margin-right: 8px; /* Space between circle and description */
+            display: inline-block;
+            border-style: solid;
+        }
+
+
+
+        /* You can add more specific styles to the legend items here */
+
+
+        /* Style for the chart text and elements */
+        #chart {
+            margin-top: 10px; /* Space above chart */
+        }
+
+        /* Style links for better visibility */
+        a {
+            color: #5b6abf; /* Primary color for links */
+            text-decoration: none; /* No underlines on links */
+        }
+
+        a:hover {
+            text-decoration: underline; /* Underline on hover for interactivity */
+        }
+
+        /* Additional styles for other elements as needed */
+        /* ... */
+
+
+        
+    </style>
+</head>
+<body>
+
+<!-- <nav id="menu"></nav>
+<div id="map"></div> -->
+
+<div class="main-container">
+    <div id="map"></div> <!-- This is your map container -->
+    <div class="dashboard-container">
+        <h2>Filters</h2>
+        <div class="toggle-container">
+            <div>
+                <label for="hospital-toggle">Hospitals:</label>
+                <input type="checkbox" id="hospital-toggle" checked>
+            </div>
+            <div>
+                <label for="transit-stop-toggle">Transit Stops:</label>
+                <input type="checkbox" id="transit-stop-toggle" checked>
+            </div>
+        </div>
+
+        <!-- Legend for the map layers -->
+        <div class="legend-container">
+            <h2>Legend</h2>
+            <div id="hospital-service-area-legend">
+                <div class="legend-title">Hospital Service Area</div>
+                <div class="legend-scale">
+                    <div class="legend-color" style="background: #c6dbef;"></div>
+                    <div class="legend-description">&lt; 25 beds</div>
+                </div>
+                <div class="legend-scale">
+                    <div class="legend-color" style="background: #9ecae1;"></div>
+                    <div class="legend-description">25 - 45 beds</div>
+                </div>
+                <div class="legend-scale">
+                    <div class="legend-color" style="background: #6baed6;"></div>
+                    <div class="legend-description">45 - 100 beds</div>
+                </div>
+                <div class="legend-scale">
+                    <div class="legend-color" style="background: #4292c6;"></div>
+                    <div class="legend-description">100 - 250 beds</div>
+                </div>
+                <div class="legend-scale">
+                    <div class="legend-color" style="background: #2171b5;"></div>
+                    <div class="legend-description">250 - 400 beds</div>
+                </div>
+                <div class="legend-scale">
+                    <div class="legend-color" style="background: #084594;"></div>
+                    <div class="legend-description">&gt; 400 beds</div>
+                </div>
+            </div>
+
+            <!-- Legend for Unclustered Hospital Points -->
+            <div class="legend-item">
+                <div class="legend-scale">
+                    <div class="legend-circle" style="background: #f9886c; border: 2px solid #fff;"></div>
+                    <div class="legend-title">Unclustered Hospital Points</div>
+                </div>
+            </div>
+
+            <!-- Legend for Transit Stops 1-mile Buffer -->
+            <!-- Legend for Transit Stops 1-mile Buffer -->
+            <div class="legend-item">
+                <div class="legend-scale">
+                    <div class="legend-circle" style="background: rgba(66, 135, 245, 0.4); border: 1px solid rgba(66, 135, 245, 0.4);"></div>
+                    <div class="legend-title">Transit Stops 1-mile Buffer</div>
+                </div>
+            </div>
+        </div>
+
+        <h2>Statistics</h2>
+        <p>click anywhere on the map to explore!</p> <br>
+        <div id="statistics"></div>
+        <div id="chart"></div>
+        <div id="chart-popup" class="popup"></div> <!-- Added pop-up element -->
+        <h5><a href="https://data.census.gov/table/ACSDT5Y2019.B19081?q=B19081:%20Mean%20Household%20Income%20of%20Quintiles&g=040XX00US53$1400000" target="_blank">Estimations from 2019 Mean Household Income of Quintiles</a></h5>
+        </div>
+    </div>
+    </div>
+</div>
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.16.0/d3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/c3@0.7.20/c3.min.js"></script>
+<!-- <script src="https://unpkg.com/@turf/turf@latest/turf.min.js"></script> -->
+<script src='https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.js'></script>
+<link href='https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.css' rel='stylesheet' />
+<script>
+    mapboxgl.accessToken = 'pk.eyJ1Ijoic2JhaW5zMiIsImEiOiJjbGpoamZhYmMwaXUzM2xxZ2dqaGM5eGJrIn0.w__oL-gnTQ1h2AZMkAX2iQ';
+    var map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/satellite-streets-v11',
+        center: [-120.5, 47.3], // Longitude, latitude of Washington state
+        zoom: 6// Adjust the zoom level as needed
+    });
+
+
+    // Add layers
+    map.on('load', function () {
+        map.addControl(new mapboxgl.ScaleControl({
+            maxWidth: 200, // Adjust as needed
+            unit: 'imperial' // Use 'metric' for metric units
+        }));
+        
+        // Income expense layer
+        map.addSource('income-expense', {
+            type: 'geojson',
+            data: 'assets/income-transportation-merged.geojson'
+        });
+
+        map.addLayer({
+            id: 'income-expense-layer',
+            type: 'fill',
+            source: 'income-expense',
+            'layout': {
+                'visibility': incomeExpenseLayerVisible ? 'visible' : 'none'
+            },
+            paint: {
+                'fill-color': [
+                    'interpolate',
+                    ['linear'],
+                    ['get', 'Percent_Income_Spent'],
+                    0, 'rgba(255, 255, 178, 0.7)',
+                    10, 'rgba(254, 204, 92, 0.7)',
+                    20, 'rgba(253, 141, 60, 0.7)',
+                    30, 'rgba(240, 59, 32, 0.7)',
+                    40, 'rgba(189, 0, 38, 0.7)'
+                ],
+                'fill-opacity': 0.0
+            }
+        });
+
+        
+
+        // Assuming 'VoronoiPolygons.geojson' is your generated Voronoi diagram GeoJSON
+        map.addSource('voronoi', {
+            type: 'geojson',
+            data: 'assets/voronoiPolygons.geojson',
+        });
+
+        map.addSource('hospitals', {
+            type: 'geojson',
+            data: 'assets/Hospitals.geojson',
+            cluster: true,
+            clusterMaxZoom: 14, // Max zoom to cluster points
+            clusterRadius: 50 // Radius of each cluster when clustering points
+
+        });
+
+        // Add Voronoi layer
+        map.addLayer({
+            id: 'voronoi-layer',
+            type: 'fill',
+            source: 'voronoi',
+            layout: {},
+            paint: {
+                'fill-color': [
+                'step',
+                ['get', 'Beds_Total'], // The property to base the steps on
+                '#c6dbef', // Default color for values less than the first step (and undefined values), a deeper light blue
+                25, '#9ecae1', // Color for up to 25 beds, light-medium blue
+                45, '#6baed6', // Color for up to 45 beds, medium blue
+                100, '#4292c6', // Color for up to 100 beds, deeper blue
+                250, '#2171b5', // Color for up to 250 beds, even deeper blue
+                400, '#084594'  // Color for more than 400 beds, darkest blue
+            ],
+                'fill-opacity': 0.6
+            },
+        });
+
+        // // Add transit stops layer
+        // map.addSource('transit-stops', {
+        //     type: 'geojson',
+        //     data: 'assets/Transit_Stops.geojson' // Path to transit stops GeoJSON file
+        // });
+
+        // map.addLayer({
+        //     id: 'transit-stops-layer',
+        //     type: 'circle',
+        //     source: 'transit-stops',
+        //     paint: {
+        //         'circle-radius': [
+        //             'interpolate',
+        //             ['linear'],
+        //             ['zoom'],
+        //             8, 4, // Adjust circle size at zoom level 8
+        //             16, 8 // Adjust circle size at zoom level 16
+        //         ],
+        //         'circle-color': 'rgba(0, 128, 255, 0.7)', // Adjust color and opacity
+        //         'circle-opacity': 0.8
+        //     },
+        //     layout: {
+        //         visibility: transitStopLayerVisible ? 'visible' : 'none'
+        //     }
+        // });
+
+        // Add the buffered transit stops as a source
+        map.addSource('buffered-transit-stops', {
+            type: 'geojson',
+            data: 'assets/bft.geojson' // Update the path as needed
+        });
+
+        // Add a layer to display the buffers
+        map.addLayer({
+            id: 'buffered-areas',
+            type: 'fill',
+            source: 'buffered-transit-stops',
+            layout: {},
+            paint: {
+                'fill-color': '#4287f5', // Choose a color for the buffers
+                'fill-opacity': 0.4
+            },
+        });
+
+
+        // You might still want to display the hospital points
+        // map.addLayer({
+        //     id: 'unclustered-point',
+        //     type: 'circle',
+        //     source: 'hospitals', // Make sure this source is defined correctly for individual points
+        //     filter: ['!', ['has', 'point_count']],
+        //     paint: {
+        //         'circle-color': '#f9886c',
+        //         'circle-radius': 2,
+        //         'circle-stroke-width': 1,
+        //         'circle-stroke-color': '#fff'
+        //     },
+        // });
+
+        // Add hospital layer clusters
+        map.addLayer({
+            id: 'clusters',
+            type: 'circle',
+            source: 'hospitals',
+            filter: ['has', 'point_count'],
+            paint: {
+                'circle-color': [
+                    'step',
+                    ['get', 'point_count'],
+                    '#f9886c', 
+                    10,
+                    '#fbb03b',
+                    20,
+                    '#56b881'
+                ],
+                'circle-radius': [
+                    'step',
+                    ['get', 'point_count'],
+                    10, // Smallest points
+                    15, // Middle points
+                    20  // Largest points
+                ],
+                'circle-opacity': 0.8
+            },
+            layout: {
+                visibility: hospitalLayerVisible ? 'visible' : 'none'
+            },
+        });
+
+        // Add count for hospitals
+        map.addLayer({
+            id: 'cluster-count',
+            type: 'symbol',
+            source: 'hospitals',
+            filter: ['has', 'point_count'],
+            layout: {
+                'text-field': ['get', 'point_count_abbreviated'],
+                'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
+                'text-size': 12
+            },
+        });
+
+        // Add hospital points unclustered
+        map.addLayer({
+            id: 'unclustered-point',
+            type: 'circle',
+            source: 'hospitals',
+            filter: ['!', ['has', 'point_count']],
+            paint: {
+                'circle-color': '#f9886c',
+                'circle-radius': 4,
+                'circle-stroke-width': 1,
+                'circle-stroke-color': '#fff'
+            },
+            layout: {
+                visibility: hospitalLayerVisible ? 'visible' : 'none'
+            }
+        });
+
+
+
+        
+
+    });
+
+    map.on('click', 'voronoi-layer', function(e) {
+        if (e.features.length > 0) {
+            var feature = e.features[0];
+
+            // Extract the properties of the clicked Voronoi polygon
+            var name = feature.properties.NAME; // Adjust the property key based on your actual data
+            var city = feature.properties.CITY; // Adjust the property key based on your actual data
+            var totalBeds = feature.properties.Beds_Total; // Adjust the property key based on your actual data
+
+            // Create and show the popup
+            var popupContent = `
+                <h3>${name}</h3>
+                <p>City: ${city}</p>
+                <p>Total Beds: ${totalBeds}</p>
+            `;
+
+            new mapboxgl.Popup()
+                .setLngLat(e.lngLat)
+                .setHTML(popupContent)
+                .addTo(map);
+
+            // Center coordinates for each census tract
+            var centerCoordinates = e.lngLat
+            // Zoom into census tract on click
+            map.flyTo({ center: centerCoordinates, zoom : 8, duration: 500 });
+            // Outline census tract
+            var features = map.queryRenderedFeatures(e.point);
+            if (features.length > 0) {
+                var feature = features[0];
+
+                if (map.getLayer('outline')) {
+                    map.removeLayer('outline');
+                    map.removeSource('outline');
+                }
+
+                map.addSource('outline', {
+                    'type': 'geojson',
+                    'data': feature.toJSON()
+                });
+
+                map.addLayer({
+                    'id': 'outline',
+                    'type': 'line',
+                    'source': 'outline',
+                    'paint': {
+                        'line-color': '#000000',
+                        'line-width': 2
+                    }
+                });
+            }
+        }
+    });
+
+    // Add 'mouseenter' event listener to change the mouse cursor when it enters a Voronoi polygon area
+    map.on('mouseenter', 'voronoi-layer', function() {
+        map.getCanvas().style.cursor = 'pointer';
+    });
+
+    // Add 'mouseleave' event listener to change the mouse cursor back when it leaves a Voronoi polygon area
+    map.on('mouseleave', 'voronoi-layer', function() {
+        map.getCanvas().style.cursor = '';
+    });
+
+
+
+    function updateChart(chartData, censusTract) {
+        // Prepare data for C3
+        var quintiles = ['LOWEST_QUINTILE', 'SECOND_QUINTILE', 'THIRD_QUINTILE', 'FOURTH_QUINTILE', 'HIGHEST_QUINTILE', 'TOP5_QUINTILE'];
+        var categories = ['1st Quintile', '2nd Quintile', '3rd Quintile', '4th Quintile', '5th Quintile', 'Top 5 Percent'];
+        var transportationData = [];
+        var leftoverIncomeData = [];
+
+        Object.keys(chartData).forEach(function(tract) {
+            quintiles.forEach(function(quintile) {
+                transportationData.push(chartData[tract][quintile].transportation);
+                leftoverIncomeData.push(chartData[tract][quintile].leftover_income);
+            });
+        });
+
+        // Initialize the chart using C3
+        var chart = c3.generate({
+            bindto: '#chart', // Target element for the chart
+            data: {
+                columns: [
+                    ['Transportation Expenses'].concat(transportationData),
+                    ['Remaining Income'].concat(leftoverIncomeData)
+                ],
+                type: 'bar',
+                colors: {
+                    'Transportation Expenses': 'orange',
+                    'Remaining Income': 'blue'
+                },
+                groups: [['Transportation Expenses', 'Remaining Income']],
+                labels: {
+                    format: {
+                        'Transportation Expenses': function (v, id, i, j) { return '$' + v; }, // Format transportation expenses with '$'
+                        'Remaining Income': function (v, id, i, j) { return '$' + v; } // Format remaining income with '$'
+                    }
+                }
+            },
+            axis: {
+                x: {
+                    type: 'category',
+                    categories: categories,
+                    tick: {
+                        rotate: -45,
+                        multiline: false
+                    }
+                },
+                y: {
+                    label: {
+                        text: 'Total Income/Expenditures',
+                        position: 'outer-middle'
+                    },
+                    tick: {
+                        format: d3.format('$')
+                    }
+                }
+            },
+            legend: {
+                item: {
+                    style: {
+                        color: 'white' // Set legend text color to white
+                    }
+                }
+            },
+            grid: {
+                lines: {
+                    front: false // Move grid lines behind the bars
+                }
+            },
+            tooltip: { // Add tooltip configuration for displaying specific values
+                format: {
+                    title: function (d) {
+                        return categories[d[0].index];
+                    },
+                    value: function (value, ratio, id, index) {
+                        if (id === 'Transportation Expenses') {
+                            return '$' + value.toFixed(2); // Format transportation expenses with '$' and two decimal places
+                        } else if (id === 'Remaining Income') {
+                            return '$' + value.toFixed(2); // Format remaining income with '$' and two decimal places
+                        }
+                        return value;
+                    }
+                }
+            }
+        });
+
+        d3.selectAll('.c3-axis-x-label, .c3-axis-y-label, .c3-axis-x .tick text, .c3-axis-y .tick text, .c3-legend-item text')
+        .style('fill', 'black');
+    }
+
+
+    var statisticsDiv = document.getElementById('statistics');
+
+    map.on('click', 'income-expense-layer', function (e) {
+        var features = map.queryRenderedFeatures(e.point);
+        var censusTractName = e.features[0].properties.NAME;
+        statisticsDiv.innerHTML = "<h5>Percentage of Income Spent on Transportation in Each Income Bracket for " + censusTractName + "</h5>";
+    });
+
+    // Add click event listener to the map for chart data
+    map.on('click', 'income-expense-layer', function (e) {
+        var censusTract = e.features[0].properties.Census_Tract;
+
+        var chartData = {
+            [censusTract]: {
+                'LOWEST_QUINTILE': {
+                    'transportation': e.features[0].properties.LOWEST_QUINTILE_transportation,
+                    'leftover_income': e.features[0].properties.LOWEST_QUINTILE_leftover_income
+                },
+                'SECOND_QUINTILE': {
+                    'transportation': e.features[0].properties.SECOND_QUINTILE_transportation,
+                    'leftover_income': e.features[0].properties.SECOND_QUINTILE_leftover_income
+                },
+                'THIRD_QUINTILE': {
+                    'transportation': e.features[0].properties.THIRD_QUINTILE_transportation,
+                    'leftover_income': e.features[0].properties.THIRD_QUINTILE_leftover_income
+                },
+                'FOURTH_QUINTILE': {
+                    'transportation': e.features[0].properties.FOURTH_QUINTILE_transportation,
+                    'leftover_income': e.features[0].properties.FOURTH_QUINTILE_leftover_income
+                },
+                'HIGHEST_QUINTILE': {
+                    'transportation': e.features[0].properties.HIGHEST_QUINTILE_transportation,
+                    'leftover_income': e.features[0].properties.HIGHEST_QUINTILE_leftover_income
+                },
+                'TOP5_QUINTILE': {
+                    'transportation': e.features[0].properties.TOP5_QUINTILE_transportation,
+                    'leftover_income': e.features[0].properties.TOP5_QUINTILE_leftover_income
+                }
+            }
+        };
+        updateChart(chartData, censusTract);
+    });
+
+
+    // Change the cursor to a pointer when hovering over census tracts
+    map.on('mouseenter', 'income-expense-layer', function () {
+        map.getCanvas().style.cursor = 'pointer';
+    });
+
+    // Change the cursor back to the default when no longer hovering over census tracts
+    map.on('mouseleave', 'income-expense-layer', function () {
+        map.getCanvas().style.cursor = '';
+    });
+
+
+    // Add a hospital layer toggle
+    var hospitalLayerVisible = true;
+    document.getElementById('hospital-toggle').addEventListener('change', function () {
+        hospitalLayerVisible = this.checked;
+        if (hospitalLayerVisible) {
+            map.setLayoutProperty('clusters', 'visibility', 'visible');
+            map.setLayoutProperty('cluster-count', 'visibility', 'visible');
+            map.setLayoutProperty('unclustered-point', 'visibility', 'visible');
+        } else {
+            map.setLayoutProperty('clusters', 'visibility', 'none');
+            map.setLayoutProperty('cluster-count', 'visibility', 'none');
+            map.setLayoutProperty('unclustered-point', 'visibility', 'none');
+        }
+    });
+
+    // Add transit stop layer toggle
+    var transitStopLayerVisible = true;
+    document.getElementById('transit-stop-toggle').addEventListener('change', function () {
+        transitStopLayerVisible = this.checked;
+        if (transitStopLayerVisible) {
+            map.setLayoutProperty('transit-stops-layer', 'visibility', 'visible');
+        } else {
+            map.setLayoutProperty('transit-stops-layer', 'visibility', 'none');
+        }
+    });
+
+    // Add income expense layer toggle
+    var incomeExpenseLayerVisible = true;
+    
+</script>
+</body>
+</html>

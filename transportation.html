@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>transportation - mapbox.js</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+
+  <!-- Mapbox stuff -->
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.8.1/mapbox-gl.css" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.8.1/mapbox-gl.js"></script>
+
+  <!-- Favicons -->
+  <link href="assets/img/favicon.png" rel="icon">
+  <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=https://fonts.googleapis.com/css?family=Inconsolata:400,500,600,700|Raleway:400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="assets/vendor/aos/aos.css" rel="stylesheet">
+  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+
+  <!-- Template Main CSS File -->
+  <link href="assets/css/style.css" rel="stylesheet">
+
+  <!-- Mapbox CSS -->
+  <style>
+    /* CSS styles for the Mapbox map */
+    #map {
+      width: 100%;
+      height: 100%;
+    }
+
+    #legend {
+      position: absolute;
+      bottom: 10px; /* Adjust top position as needed */
+      left: 10px; /* Adjust left position as needed */
+      width: 20%;
+      max-width: 150px; /* Adjust width as needed */
+      background-color: rgba(0, 0, 0, 0.7);
+      border-radius: 3px;
+      padding: 10px;
+      text-align: center;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 10px;
+      z-index: 1; /* Ensure legend appears above the map */
+    }
+
+    .break {
+        position: relative;
+        margin: 0px;
+        padding: 0px;
+    }
+
+    .dot {
+        display: inline-block;
+        margin-top: 5px;
+        border-radius: 50%;
+        opacity: 0.6;
+        margin-right: 5px;
+    }
+
+    .dot-label {
+      vertical-align: middle;
+    }
+
+    a {
+        color: black
+    }
+
+    #title {
+        position: absolute;
+        top: 0;
+        left: 0;
+        margin-top: 20px;
+        margin-left: 20px;
+        font-family: 'Open Sans', sans-serif;
+        font-size: 25pt;
+        color: white
+    }
+
+    #subtitle {
+        position: absolute;
+        top: 0;
+        left: 0;
+        margin-top: 70px;
+        margin-left: 190px;
+        font-family: 'Open Sans', sans-serif;
+        font-size: 15pt;
+        color: white
+    }
+    
+</style>
+
+  <!-- =======================================================
+  * Template Name: MyPortfolio
+  * Template URL: https://bootstrapmade.com/myportfolio-bootstrap-portfolio-website-template/
+  * Updated: Mar 17 2024 with Bootstrap v5.3.3
+  * Author: BootstrapMade.com
+  * License: https://bootstrapmade.com/license/
+  ======================================================== -->
+</head>
+
+<body>
+
+  <!-- ======= Navbar ======= -->
+  <div class="back-button">
+    <a href="index.html">&#x2190; back</a>
+  </div>
+
+
+  <main id="main">
+    <section class="section">
+        <div class="container">
+            <div class="row mb-4 align-items-center">
+                <div class="col-md-6" data-aos="fade-up">
+                    <h2>Hospital Service Areas and Transportation</h2>
+                    <p>An Analysis Map</p>
+                </div>
+            </div>
+
+            <div class="site-section pb-0">
+                <div class="container">
+                    <div class="row align-items-stretch">
+                        <!-- Image container now takes full width -->
+                        <div class="col-12" data-aos="fade-up" style="margin-top: -5px;">
+                            <div class="map-container">
+                                <iframe src="test.html" style="width:100%; height:100%; border:none;"></iframe>
+                            </div>
+                        </div>
+                        <!-- Text content now positioned under the image -->
+                        <div class="col-12" data-aos="fade-up" data-aos-delay="100">
+                            <div class="sticky-content">
+                                <div class="mb-4">
+                                    <h4 class="h3 mb-3">Project Overview</h4>
+                                    <p>This project utilizes geospatial analysis to illustrate the accessibility of healthcare services and public transportation within distinct areas, and to correlate these services with local income levels. The primary objectives include mapping hospital service areas using Voronoi tessellations to understand the geographical distribution of healthcare facilities, delineating public transportation service areas through a 1-mile buffer analysis around transit stops, and dynamically representing local income data with an interactive chart. These methods collectively provide a visual and quantitative evaluation of healthcare and transportation disparities among various socioeconomic groups, revealing the potential relationships between accessibility to essential services and economic conditions.</p>
+
+                                      <h4 class="h3 mb-3">Key Findings - Case Study Examples</h4>
+                                      
+                                      <section class="section3">
+                                        <div class="container">
+                                            <div class="row"> <!-- Add this row to contain the columns side by side -->
+                                                <div class="item mapbox col-sm-6 col-md-4 col-lg-4 mb-4" data-aos="fade-up">
+                                                    <a class="item-wrap fancybox">
+                                                        <img class="img-fluid" src="assets/img/tacoma.png">
+                                                    </a>
+                                                    <p>TACOMA, WA - Some urban neighborhoods may not be well-served by public transportation due to inadequate planning or funding. Residents in these "transit deserts" such as the Midland neighborhood in Tacoma, may find it difficult to reach hospitals and clinics without personal vehicles.</p>
+                                                </div>
+                                                <div class="item mapbox col-sm-6 col-md-4 col-lg-4 mb-4" data-aos="fade-up">
+                                                  <a class="item-wrap fancybox">
+                                                      <img class="img-fluid" src="assets/img/republic.png">
+                                                  </a>
+                                                  <p>REPUBLIC, WA - The buffer analysis showed that several areas, especially those distant from city centers, have limited access to public transportation, which could hinder access to healthcare facilities to community members. It was revealed that the city of Republic, WA has no infrastruction for bus stops whatsoever.</p>
+                                              </div>
+                                                <div class="item mapbox col-sm-6 col-md-4 col-lg-4 mb-4" data-aos="fade-up" data-aos-delay="100"> <!-- Consider adding data-aos-delay for the second item to animate it separately -->
+                                                    <a class="item-wrap fancybox">
+                                                        <img class="img-fluid" src="assets/img/forks.png">
+                                                    </a>
+                                                    <p>MAKAH RESERVATION - Geographic barriers such as rivers and highways were found to significantly impact the accessibility of both healthcare and public transportation, with certain natural and man-made features creating literal barriers to service areas. The Indian reservation of the Makah Tribe in Neah Bay has no hospitals and are limited in road access to the closest hospital in Forks, WA</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </section>
+                                </div>
+                          
+                                <h4 class="h3 mb-3">What I did</h4>
+                                <ul class="list-unstyled list-line mb-5">
+                                    <li><strong>Data Cleaning with GeoPandas:</strong> Utilized GeoPandas in Python for geospatial data manipulation to clean and standardize hospital and transit stop datasets.</li>
+                                    <li><strong>Geospatial Analysis with Turf.js and GIS:</strong> Applied Turf.js for geospatial operations in the browser and GIS for spatial relationship analysis, generating Voronoi tessellations for hospital service areas.</li>
+                                    <li><strong>Buffer Analysis for Transit Accessibility:</strong> Performed 1-mile buffer analysis around transit stops to identify accessible areas for public transportation to healthcare services.</li>
+                                    <li><strong>Map Visualization with Mapbox:</strong> Created interactive map visualizations using Mapbox, integrating Voronoi and buffer layers onto a satellite map.</li>
+                                    <li><strong>Dynamic Data Visualization:</strong> Built an interactive chart using C3.js to display income data and visualize disparities, ensuring real-time updates based on map interactions.</li>
+                                    <li><strong>Synthesized Comprehensive Analysis:</strong> Combined geospatial analysis with socioeconomic data to offer insights into healthcare accessibility and transportation equity.</li>
+                                </ul>
+                        
+                                  <p><a href=test.html class="readmore">see fullscreen</a></p>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </section>
+</main>
+
+
+
+  <!-- ======= Footer ======= -->
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-6">
+          <p class="mb-1">made with ♡ by elaine azul</p>
+          <div class="credits">
+            <!--
+            All the links in the footer should remain intact.
+            You can delete the links only if you purchased the pro version.
+            Licensing information: https://bootstrapmade.com/license/
+            Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/buy/?theme=MyPortfolio
+          -->
+            designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
+          </div>
+        </div>
+        <div class="col-sm-6 social text-md-end">
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Vendor JS Files -->
+  <script src="assets/vendor/aos/aos.js"></script>
+  <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
+  <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
+  <script src="assets/vendor/php-email-form/validate.js"></script>
+
+  <!-- Template Main JS File -->
+  <script src="assets/js/main.js"></script>
+
+</body>
+
+</html>

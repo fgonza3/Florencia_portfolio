@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>transportation - mapbox.js</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+
+<!-- leflet -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Transportation Expense by Income in Washington State</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/c3@0.7.20/c3.min.css">
+  <link rel="stylesheet" type="text/css" href="css/style.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+
+  <!-- Favicons -->
+  <link href="assets/img/favicon.png" rel="icon">
+  <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=https://fonts.googleapis.com/css?family=Inconsolata:400,500,600,700|Raleway:400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="assets/vendor/aos/aos.css" rel="stylesheet">
+  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+
+  <!-- Template Main CSS File -->
+  <link href="assets/css/style.css" rel="stylesheet">
+
+  <!--  CSS -->
+  <style>
+    /* CSS styles for the  map */
+    #map {
+      width: 100%;
+      height: 100%;
+    }
+
+    #legend {
+      position: absolute;
+      bottom: 10px; /* Adjust top position as needed */
+      left: 10px; /* Adjust left position as needed */
+      width: 20%;
+      max-width: 150px; /* Adjust width as needed */
+      background-color: rgba(0, 0, 0, 0.7);
+      border-radius: 3px;
+      padding: 10px;
+      text-align: center;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 10px;
+      z-index: 1; /* Ensure legend appears above the map */
+    }
+
+    .break {
+        position: relative;
+        margin: 0px;
+        padding: 0px;
+    }
+
+    .dot {
+        display: inline-block;
+        margin-top: 5px;
+        border-radius: 50%;
+        opacity: 0.6;
+        margin-right: 5px;
+    }
+
+    .dot-label {
+      vertical-align: middle;
+    }
+
+    a {
+        color: black
+    }
+
+    #title {
+        position: absolute;
+        top: 0;
+        left: 0;
+        margin-top: 20px;
+        margin-left: 20px;
+        font-family: 'Open Sans', sans-serif;
+        font-size: 25pt;
+        color: white
+    }
+
+    #subtitle {
+        position: absolute;
+        top: 0;
+        left: 0;
+        margin-top: 70px;
+        margin-left: 190px;
+        font-family: 'Open Sans', sans-serif;
+        font-size: 15pt;
+        color: white
+    }
+    
+</style>
+
+</head>
+
+<body>
+
+
+
+  <main id="main">
+    <section class="section">
+        <div class="container">
+            <div class="row mb-4 align-items-center">
+                <div class="col-md-6" data-aos="fade-up">
+                    <h2>Hospital Service Areas and Transportation</h2>
+                    <p>An Analysis Map</p>
+                </div>
+            </div>
+
+            <div class="site-section pb-0">
+                <div class="container">
+                    <div class="row align-items-stretch">
+                        <!-- Image container now takes full width -->
+                        <div class="col-12" data-aos="fade-up" style="margin-top: -5px;">
+                            <div class="map-container">
+                                <iframe src="quizmap.html" style="width:100%; height:100%; border:none;"></iframe>
+                            </div>
+                        </div>
+                        <!-- Text content now positioned under the image -->
+                        <div class="col-12" data-aos="fade-up" data-aos-delay="100">
+                            <div class="sticky-content">
+                                <div class="mb-4">
+                                    <h4 class="h3 mb-3">Project Overview</h4>
+                                    <p>This project utilizes geospatial analysis to illustrate the accessibility of healthcare services and public transportation within distinct areas, and to correlate these services with local income levels. The primary objectives include mapping hospital service areas using Voronoi tessellations to understand the geographical distribution of healthcare facilities, delineating public transportation service areas through a 1-mile buffer analysis around transit stops, and dynamically representing local income data with an interactive chart. These methods collectively provide a visual and quantitative evaluation of healthcare and transportation disparities among various socioeconomic groups, revealing the potential relationships between accessibility to essential services and economic conditions. The target users for this map are policymakers, healthcare providers, urban planners, and residents of Washington State. The OpenStreetMap basemap is chosen for its detailed and regularly updated information, which is crucial for accurately displaying transportation networks and healthcare facilities.</p>
+
+                                      
+                                </div>
+                          
+                            
+                        
+                                  <p><a href=quizmap.html class="readmore">see fullscreen</a></p>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </section>
+</main>
+
+
+
+  
+
+  <!-- Vendor JS Files -->
+  <script src="assets/vendor/aos/aos.js"></script>
+  <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
+  <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
+  <script src="assets/vendor/php-email-form/validate.js"></script>
+
+  <!-- Template Main JS File -->
+  <script src="assets/js/main.js"></script>
+
+</body>
+
+</html>

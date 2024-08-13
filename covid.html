@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>covid - mapbox.js</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+
+  <!-- Mapbox stuff -->
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.8.1/mapbox-gl.css" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.8.1/mapbox-gl.js"></script>
+
+  <!-- Favicons -->
+  <link href="assets/img/favicon.png" rel="icon">
+  <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=https://fonts.googleapis.com/css?family=Inconsolata:400,500,600,700|Raleway:400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="assets/vendor/aos/aos.css" rel="stylesheet">
+  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+
+  <!-- Template Main CSS File -->
+  <link href="assets/css/style.css" rel="stylesheet">
+
+  <!-- Mapbox CSS -->
+  <style>
+    /* CSS styles for the Mapbox map */
+    #map {
+      width: 100%;
+      height: 100%;
+    }
+
+    #legend {
+      position: absolute;
+      bottom: 10px; /* Adjust top position as needed */
+      left: 10px; /* Adjust left position as needed */
+      width: 20%;
+      max-width: 150px; /* Adjust width as needed */
+      background-color: rgba(0, 0, 0, 0.7);
+      border-radius: 3px;
+      padding: 10px;
+      text-align: center;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 10px;
+      z-index: 1; /* Ensure legend appears above the map */
+    }
+
+    .break {
+        position: relative;
+        margin: 0px;
+        padding: 0px;
+    }
+
+    .dot {
+        display: inline-block;
+        margin-top: 5px;
+        border-radius: 50%;
+        opacity: 0.6;
+        margin-right: 5px;
+    }
+
+    .dot-label {
+      vertical-align: middle;
+    }
+
+    a {
+        color: black
+    }
+
+    #title {
+        position: absolute;
+        top: 0;
+        left: 0;
+        margin-top: 20px;
+        margin-left: 20px;
+        font-family: 'Open Sans', sans-serif;
+        font-size: 25pt;
+        color: white
+    }
+
+    #subtitle {
+        position: absolute;
+        top: 0;
+        left: 0;
+        margin-top: 70px;
+        margin-left: 190px;
+        font-family: 'Open Sans', sans-serif;
+        font-size: 15pt;
+        color: white
+    }
+    
+</style>
+
+  <!-- =======================================================
+  * Template Name: MyPortfolio
+  * Template URL: https://bootstrapmade.com/myportfolio-bootstrap-portfolio-website-template/
+  * Updated: Mar 17 2024 with Bootstrap v5.3.3
+  * Author: BootstrapMade.com
+  * License: https://bootstrapmade.com/license/
+  ======================================================== -->
+</head>
+
+<body>
+
+  <!-- ======= Navbar ======= -->
+  <div class="back-button">
+    <a href="index.html">&#x2190; back</a>
+  </div>
+
+
+  <main id="main">
+
+    <section class="section">
+      <div class="container">
+        <div class="row mb-4 align-items-center">
+          <div class="col-md-6" data-aos="fade-up">
+            <h2>COVID Cases in the US - Mapbox.js</h2>
+            <p>A proportional symbol map</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="site-section pb-0">
+        <div class="container">
+          <div class="row align-items-stretch">
+            <div class="col-md-8" data-aos="fade-up">
+              <div class="map-container">
+                <!-- Mapbox -->
+                <div id="map"></div>
+                <div id="legend"></div>
+                <script>
+                  mapboxgl.accessToken =
+                      'pk.eyJ1IjoiamFrb2J6aGFvIiwiYSI6ImNpcms2YWsyMzAwMmtmbG5icTFxZ3ZkdncifQ.P9MBej1xacybKcDN_jehvw';
+                  let map = new mapboxgl.Map({
+                      container: 'map', // container ID
+                      style: 'mapbox://styles/mapbox/dark-v10',
+                      zoom: 3.5, // starting zoom
+                      minZoom: 2, // minimum zoom level of the map
+                      center: [-98, 39] // starting center
+                  });
+                  const grades = [100, 5000, 15000, 20000, 30000, 50000];
+                  const colors = [
+                      'rgb(255, 255, 204)', // Light yellow
+                      'rgb(255, 255, 102)', // Yellow
+                      'rgb(255, 204, 51)', // Yellow-orange
+                      'rgb(255, 153, 51)', // Orange
+                      'rgb(255, 102, 0)', // Orange-red
+                      'rgb(255, 51, 51)' // Red
+                  ];
+                  const radii = [1, 2, 6, 8, 12, 20];
+              
+                  // Set Albers projection
+                  map.setProjection({
+                      name: 'albers',
+                      center: [-98, 39], // Center coordinates for your desired view
+                      parallels: [29.5, 45] // Specify the parallels
+                  });
+              
+                  //load data to the map as new layers.
+                  //map.on('load', function loadingData() {
+                  map.on('load', () => { //simplifying the function statement: arrow with brackets to define a function
+                      // when loading a geojson, there are two steps
+                      // add a source of the data and then add the layer out of the source
+                      map.addSource('count', {
+                          type: 'geojson',
+                          data: 'assets/covidCounts.json'
+                      });
+                      map.addLayer({
+                          'id': 'count-point',
+                          'type': 'circle',
+                          'source': 'count',
+                          'paint': {
+                              // increase the radii of the circle as the zoom level and dbh value increases
+                              'circle-radius': {
+                                  'property': 'cases',
+                                  'stops': [
+                                      [grades[0], radii[0]],
+                                      [grades[1], radii[1]],
+                                      [grades[2], radii[2]],
+                                      [grades[3], radii[3]],
+                                      [grades[4], radii[4]],
+                                      [grades[5], radii[5]],
+                                  ]
+                              },
+                              'circle-color': {
+                                  'property': 'cases',
+                                  'stops': [
+                                      [grades[0], colors[0]],
+                                      [grades[1], colors[1]],
+                                      [grades[2], colors[2]],
+                                      [grades[3], colors[3]],
+                                      [grades[4], colors[4]],
+                                      [grades[5], colors[5]]
+                                  ]
+                              },
+                              'circle-stroke-color': 'white',
+                              'circle-stroke-width': 0.3,
+                              'circle-opacity': 0.6
+                          }
+                      });
+                      // click on tree to view counts in a popup
+                      map.on('click', 'count-point', (event) => {
+                        const county = event.features[0].properties.county;
+                        const cases = event.features[0].properties.cases;
+                        new mapboxgl.Popup()
+                            .setLngLat(event.features[0].geometry.coordinates)
+                            .setHTML(`<strong>${county} County</strong><br>Cases: ${cases}`)
+                            .addTo(map);
+                    });
+                  });
+                  // create legend
+                  const legend = document.getElementById('legend');
+                  //set up legend grades and labels
+                  var labels = ['<strong><span style="color: white;">Cases</span></strong>'],
+                      vbreak;
+                  //iterate through grades and create a scaled circle and label for each
+                  for (var i = 0; i < grades.length; i++) {
+                      vbreak = grades[i];
+                      // you need to manually adjust the radius of each dot on the legend 
+                      // in order to make sure the legend can be properly referred to the dot on the map.
+                      dot_radii = 2 * radii[i];
+                      labels.push(
+                          '<p class="break"><i class="dot" style="background:' + colors[i] + '; width: ' + dot_radii +
+                          'px; height: ' +
+                          dot_radii + 'px; "></i> <span class="dot-label" style="top: ' + dot_radii / 2 + 'px; color: white;">' + vbreak +
+                          '</span></p>');
+                  }
+                  legend.innerHTML = labels.join('');
+              </script>
+              
+              </div>
+            </div>
+            <div class="col-md-3 ml-auto" data-aos="fade-up" data-aos-delay="100">
+              <div class="sticky-content">
+                <div class="mb-5">
+                  <p>COVID Visualizations is a mapping project that visualizes COVID-19 case rates at the county level 
+                    in the United States for the year 2020. The map uses proportional representations to showcase variations in case rates,
+                     providing insights into the impact of the pandemic across different regions. </p>
+                  <p>Source: <a href="https://github.com/nytimes/covid-19-data/blob/43d32dde2f87bd4dafbb7d23f5d9e878124018b8/live/us-counties.csv" target="_blank" style="color: blue; text-decoration: underline;">New York Times</a></p>
+
+                </div>
+
+                <h4 class="h3 mb-3">What I did</h4>
+                <ul class="list-unstyled list-line mb-5">
+                  <li>Design</li>
+                  <li>HTML/CSS/JS</li>
+                  <li>Mapbox</li>
+                  <li>Implement circle layer where radii and color vary based on data values</li>
+                  <li>Set up pop up display with relevant information</li>
+                </ul>
+
+                <p><a href="https://eazebra.github.io/COVID-Visualizations/map1/map1.html" class="readmore">visit website</a></p>
+                <p><a href="https://eazebra.github.io/COVID-Visualizations/map2/map2.html" class="readmore">see similar map</a></p>
+              </div>
+            </div>
+          </div>
+        </div>
+    </section>
+
+  </main><!-- End #main -->
+
+  <!-- ======= Footer ======= -->
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-6">
+          <p class="mb-1">made with ♡ by elaine azul</p>
+          <div class="credits">
+            <!--
+            All the links in the footer should remain intact.
+            You can delete the links only if you purchased the pro version.
+            Licensing information: https://bootstrapmade.com/license/
+            Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/buy/?theme=MyPortfolio
+          -->
+            designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
+          </div>
+        </div>
+        <div class="col-sm-6 social text-md-end">
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Vendor JS Files -->
+  <script src="assets/vendor/aos/aos.js"></script>
+  <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
+  <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
+  <script src="assets/vendor/php-email-form/validate.js"></script>
+
+  <!-- Template Main JS File -->
+  <script src="assets/js/main.js"></script>
+
+</body>
+
+</html>
