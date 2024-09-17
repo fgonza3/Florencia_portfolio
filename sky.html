@@ -97,7 +97,14 @@
         font-size: 15pt;
         color: white
     }
-    
+    .image-container img {
+      width: 100%;
+      height: auto;
+    }
+
+    .content-container {
+      margin-top: 20px;
+    }
 </style>
 
   <!-- =======================================================
@@ -122,36 +129,56 @@
         <div class="container">
             <div class="row mb-4 align-items-center">
                 <div class="col-md-6" data-aos="fade-up">
-                    <h2>Colors in the Sky</h2>
-                    <p>A Python Project</p>
+                    <h2> Pioneer Square</h2>
+                    <p> Esri</p>
                 </div>
             </div>
 
             <div class="site-section pb-0">
                 <div class="container">
-                    <div class="row align-items-stretch">
+                    <div class="row">
                         <!-- Image container now takes full width -->
-                        <div class="col-8" data-aos="fade-up" style="margin-top: -5px;">
+                        <div class="col-12" data-aos="fade-up" style="margin-top: -5px;">
                             <div class="image-container">
-                                <img src="assets/img/sky-rect.png" alt="Descriptive Text for Image" style="width: 90%; height: auto;">
+                                <img src="assets/img/pioneer.png" alt="Descriptive Text for Image">
                             </div>
                         </div>
                         <!-- Text content now positioned under the image -->
-                        <div class="col-md-3 ml-auto" data-aos="fade-up" data-aos-delay="100">
+                        <div class="col-12 content-container" data-aos="fade-up" data-aos-delay="100">
                             <div class="sticky-content">
                               <div class="mb-5">
-                                <p>This visualization shows the colors in the sky throughout the day to challenge the stereotype of gloomy skies in Seattle. </p>
+                                <p> <h4 class="h3 mb-3">Background: </h4> </p>
+                                <p>I collaborated with a team of five, including a subgroup of two, to 
+                                  analyze upcoming changes and events that could impact neighborhoods around
+                                  Seattle. Our primary focus was on the Chinatown International District (CID)
+                                  and Downtown Seattle. Within my group, we concentrated on the Civic Campus
+                                  redevelopemt in Downtown Seattle. A final report detaling our finding and
+                                  strategies for this project, conducted for Sound Puget Sage, is available
+                                  for viewing</p>
+                                <p> <h4 class="h3 mb-3">Research Question:</h4> </p>
+                                <p> What Opportunities and threats over the next five years 
+                                  might affect small businesses and residents in the Downtown
+                                  Seattle neigborhhood?
+                                </p>
                               </div>
-              
-                              <h4 class="h3 mb-3">What I did</h4>
+                                <p><a href="https://arcg.is/1iTyeT1" class="readmore">View Full StoryMap</a></p>
+                                <p><a href="https://docs.google.com/document/d/1v0DY4FKT9gpP3DLw4z9xecc68p7tdMlTjLypoD-rW_8/edit?usp=sharing" class="readmore">View Final Report</a></p>
+
+                              <h4 class="h3 mb-3">What I did:</h4>
                               <ul class="list-unstyled list-line mb-5">
-                                <li>Batch cropping and processing of over 30+ images</li>
-                                <li>Analyze most dominant colors of processed images</li>
-                                <li>Filtered out non-sky colors and stored in dataframe</li>
-                                <li>Altair, NumPy, Pandas, PIL</li>
+                                <li>Geocoded address using ArcGIS Pro</li>
+                                <li>Cleaned and processed a large dataset from the Seattle Open Data Portal, focusing on public land use and master use permits.</li>
+                                <li>Created maps to showcase changes in the built environment.</li>
+                                <li>Utilized SQL and Python for data mainpulation and analysis.</li>
                               </ul>
-              
-                              <p><a href="https://sites.google.com/uw.edu/visualizingseattle/projects/grey-anatomy" class="readmore">Read More</a></p>
+                              <p> <h4 class="h3 mb-3">Summary:</h4> </p>
+                              <p>In Downtown, the implementation of three new zoning laws and the planned Civic Campus redevelopment offer significant opportunities for growth and modernization. 
+                                The new industrial zones—Mixed Manufacturing and Logistics (MML), Industry and Innovation (II), and Urban Industrial (UI)—are designed to balance traditional and 
+                                emerging industries, diversify industrial uses, and expand employment centers. However, challenges include the potential reduction of public land and affordable housing.
+                                To foster a vibrant urban environment, it is recommended to incorporate publicly accessible areas such as parks, plazas, and community centers into the redevelopment. 
+                                Supporting a variety of uses, including retail, entertainment, cultural spaces, and public utilities, is also advised. Additionally, promoting economic diversity can 
+                                help alleviate financial pressures on businesses reliant on the Civic Campus. Potential benefits of these initiatives include enhanced community safety, improved prison 
+                                facilities, and economic revitalization.</p>
                             </div>
                           </div>
                         
@@ -170,7 +197,7 @@
     <div class="container">
       <div class="row">
         <div class="col-sm-6">
-          <p class="mb-1">made with ♡ by elaine azul</p>
+          <p class="mb-1">made by Florencia Gonzalez-Martinez</p>
           <div class="credits">
             <!--
             All the links in the footer should remain intact.
